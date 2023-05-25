@@ -76,27 +76,6 @@ public class SongLoader : MonoBehaviour
     private IEnumerator PrepareCoroutine(Song song,
         OnPrepared onPrepared)
     {
-        Debug.Log("Loading guitar");
-        yield return null;
-        Song.Audio audio = new Song.Audio();
-        FileInfo guitarFileInfo = new FileInfo(song.fileInfo.Directory.FullName + "/guitar.ogg");
-        if (guitarFileInfo.Exists)
-        {
-            using (UnityWebRequest uwr = UnityWebRequestMultimedia.GetAudioClip(guitarFileInfo.FullName,
-                       AudioType.OGGVORBIS))
-            {
-                yield return uwr.SendWebRequest();
-                if (uwr.isNetworkError || uwr.isHttpError)
-                {
-                    Debug.LogError(uwr.error);
-                    yield break;
-                }
-
-                yield return null;
-                audio.guitar = DownloadHandlerAudioClip.GetContent(uwr);
-            }
-        }
-
         Debug.Log("Loading song");
         yield return null;
         FileInfo songFileInfo = new FileInfo(song.fileInfo.Directory.FullName + "/song.ogg");
@@ -113,31 +92,10 @@ public class SongLoader : MonoBehaviour
                 }
 
                 yield return null;
-                audio.song = DownloadHandlerAudioClip.GetContent(uwr);
+                song.audio = DownloadHandlerAudioClip.GetContent(uwr);
             }
         }
 
-        Debug.Log("Loading rhythm");
-        yield return null;
-        FileInfo rhythmFileInfo = new FileInfo(song.fileInfo.Directory.FullName + "/rhythm.ogg");
-        if (rhythmFileInfo.Exists)
-        {
-            using (UnityWebRequest uwr = UnityWebRequestMultimedia.GetAudioClip(rhythmFileInfo.FullName,
-                       AudioType.OGGVORBIS))
-            {
-                yield return uwr.SendWebRequest();
-                if (uwr.isNetworkError || uwr.isHttpError)
-                {
-                    Debug.LogError(uwr.error);
-                    yield break;
-                }
-
-                yield return null;
-                audio.rhythm = DownloadHandlerAudioClip.GetContent(uwr);
-            }
-        }
-
-        song.audio = audio;
         Debug.Log("Audio loaded");
         onPrepared();
     }

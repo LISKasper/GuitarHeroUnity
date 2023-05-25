@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [Serializable]
 public class Song
 {
     public bool ready;
     public Data data;
-
-    public Audio audio;
+    [FormerlySerializedAs("song")] public AudioClip audio;
 
     //Data
     public FileInfo fileInfo;
@@ -57,11 +57,5 @@ public class Song
             command = _command;
             value = _value;
         }
-    }
-
-    [Serializable]
-    public class Audio
-    {
-        public AudioClip song, guitar, rhythm;
     }
 }

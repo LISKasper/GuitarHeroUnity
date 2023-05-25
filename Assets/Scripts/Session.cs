@@ -25,10 +25,10 @@ public class Session : MonoBehaviour
     public float RenderingFadeAmount = 1;
 
     private double beatsPerSecond, secondsPassed, beatsPassed, ticksPassed;
+    public Smoothing smoothing;
 
     //public NoteInstance[] noteInstancePool;
-    private AudioSource guitarSource, rhythmSource, songSource;
-    public Smoothing smoothing;
+    private AudioSource songSource;
 
     private void Update()
     {
@@ -39,8 +39,6 @@ public class Session : MonoBehaviour
             frameIndex++;
             time = songSource.time * 1000f;
             float millisecondsPassed = time - previousTime;
-            rhythmSource.time = songSource.time;
-            guitarSource.time = songSource.time;
 
             Sync(millisecondsPassed);
             smoothBpm = smoothing.SmoothBPM(bpm);
@@ -55,20 +53,13 @@ public class Session : MonoBehaviour
             player.CreateBar(tick);
             player.UpdateActiveBars(smoothTick);
             player.RegisterAndRemove(smoothTick);
-            playGuitarMusic |= player.lastNoteHit;
-
-            guitarSource.volume = playGuitarMusic ? 1 : 0;
 
             previousTime = time;
         }
         else
         {
             if (playing)
-            {
-                guitarSource.Play();
-                rhythmSource.Play();
                 songSource.Play();
-            }
         }
     }
 
@@ -77,13 +68,8 @@ public class Session : MonoBehaviour
     {
         Debug.Log("initializing ");
         song = _song;
-        guitarSource = gameObject.AddComponent<AudioSource>();
-        rhythmSource = gameObject.AddComponent<AudioSource>();
         songSource = gameObject.AddComponent<AudioSource>();
-        guitarSource.playOnAwake = rhythmSource.playOnAwake = songSource.playOnAwake = false;
-        guitarSource.clip = song.audio.guitar;
-        rhythmSource.clip = song.audio.rhythm;
-        songSource.clip = song.audio.song;
+        songSource.clip = song.audio;
         Shader.SetGlobalFloat("_GH_Distance",
             RenderingFadeDistance);
         Shader.SetGlobalFloat("_GH_Fade",
@@ -158,13 +144,9 @@ public class Session : MonoBehaviour
 
         frameIndex = 0;
         //noteInstancePool = null;
-        Destroy(guitarSource.clip);
-        Destroy(rhythmSource.clip);
         Destroy(songSource.clip);
-        Destroy(guitarSource);
-        Destroy(rhythmSource);
         Destroy(songSource);
-        guitarSource = rhythmSource = songSource = null;
+        songSource = null;
         time = previousTime = 0;
         tick = 0;
         smoothTick = 0;
