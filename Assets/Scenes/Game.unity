@@ -215,32 +215,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7472acea019a163468bc5bb09952757e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerNumber: 0
   playerInput:
-    deviceId: 0
     fred: 
-    strumPressed: 0
   layerMask: 0
-  difficulty: 3
   noteCounter: {fileID: 1866698201}
   output: {fileID: 0}
   song:
     ready: 0
     data:
       notes:
-        easy: []
-        medium: []
-        hard: []
-        expert: []
-      info:
-        resolution: 0
+      - timestamp: 0
+        duration: 0
+        fred: 0
+      - timestamp: 0
+        duration: 0
+        fred: 0
+      - timestamp: 0
+        duration: 0
+        fred: 0
+      - timestamp: 0
+        duration: 0
+        fred: 0
+      resolution: 0
       syncTrack: []
-      events: []
-    audio:
-      song: {fileID: 0}
-      guitar: {fileID: 0}
-      rhythm: {fileID: 0}
-      preview: {fileID: 0}
+    audio: {fileID: 0}
   notes: []
   cam: {fileID: 1565596941}
   board: {fileID: 1926865661}
@@ -261,15 +259,18 @@ MonoBehaviour:
   willRemoveBars: []
   nextLine:
     available: 0
-    number: 0
     lowestFred: 0
     timestamp: 0
     fred: 
     note: []
-    strumPressed: 0
-    succes: 0
-    fail: 0
-    isHammerOn: 0
+    state: 0
+  nextnextLine:
+    available: 0
+    lowestFred: 0
+    timestamp: 0
+    fred: 
+    note: []
+    state: 0
   flame:
   - {fileID: 1016084068}
   - {fileID: 2017444981}
@@ -285,7 +286,6 @@ MonoBehaviour:
   resolution: 0
   speed: 0
   nextBar: 0
-  lastNoteHit: 1
 --- !u!4 &46059196
 Transform:
   m_ObjectHideFlags: 0
@@ -661,21 +661,23 @@ MonoBehaviour:
     ready: 0
     data:
       notes:
-        easy: []
-        medium: []
-        hard: []
-        expert: []
-      info:
-        resolution: 0
+      - timestamp: 0
+        duration: 0
+        fred: 0
+      - timestamp: 0
+        duration: 0
+        fred: 0
+      - timestamp: 0
+        duration: 0
+        fred: 0
+      - timestamp: 0
+        duration: 0
+        fred: 0
+      resolution: 0
       syncTrack: []
-      events: []
-    audio:
-      song: {fileID: 0}
-      guitar: {fileID: 0}
-      rhythm: {fileID: 0}
-      preview: {fileID: 0}
+    audio: {fileID: 0}
   playerPrefab: {fileID: 46059195}
-  players: []
+  player: {fileID: 0}
   sessionRenderer: {fileID: 1636736913}
   notes:
   - {fileID: 21300000, guid: f0143283f45b218419250a0b4c0a0acf, type: 3}
@@ -707,7 +709,6 @@ MonoBehaviour:
   visualOffset: -100
   tick: 0
   smoothTick: 0
-  starPowerDuration: 0
   bpm: 0
   smoothBpm: 0
   RenderingFadeDistance: 3
@@ -1260,7 +1261,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00006686228}
+  m_AnchoredPosition: {x: 0, y: -0.000028333692}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &349660019
@@ -4974,7 +4975,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1974177368}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
