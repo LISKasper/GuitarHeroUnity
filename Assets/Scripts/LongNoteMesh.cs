@@ -17,9 +17,4 @@ public class LongNoteMesh : MonoBehaviour
         m.vertices = vertices;
         mf.mesh = m;
     }
-
-    // Update is called once per frame
-    private void Update()
-    {
-    }
 }

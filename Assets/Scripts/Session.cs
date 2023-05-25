@@ -20,7 +20,6 @@ public class Session : MonoBehaviour
     public double visualOffset;
     public double tick;
     public double smoothTick;
-    public double starPowerDuration;
     public double bpm, smoothBpm;
     public float RenderingFadeDistance = 3;
     public float RenderingFadeAmount = 1;
@@ -169,7 +168,6 @@ public class Session : MonoBehaviour
         time = previousTime = 0;
         tick = 0;
         smoothTick = 0;
-        starPowerDuration = 0;
         bpm = smoothBpm = 0;
         syncIndex = 0;
         player.Dispose();
@@ -208,19 +206,5 @@ public class Session : MonoBehaviour
                 syncIndex++;
             }
         }
-    }
-
-    public float TickDistanceToMeters(float tickDistance)
-    {
-        if (song == null)
-            return 0;
-        return tickDistance / song.data.info.resolution * speed;
-    }
-
-    public float MetersToTickDistance(float meters)
-    {
-        if (song == null)
-            return 0;
-        return meters / speed * song.data.info.resolution;
     }
 }
