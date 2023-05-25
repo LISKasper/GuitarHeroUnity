@@ -25,6 +25,8 @@ public class Session : MonoBehaviour
     public float RenderingFadeAmount = 1;
 
     private double beatsPerSecond, secondsPassed, beatsPassed, ticksPassed;
+
+    private float f;
     public Smoothing smoothing;
 
     //public NoteInstance[] noteInstancePool;
@@ -39,6 +41,13 @@ public class Session : MonoBehaviour
             frameIndex++;
             time = songSource.time * 1000f;
             float millisecondsPassed = time - previousTime;
+
+            f += millisecondsPassed / 1000.0f;
+            if (f > 2.0f)
+            {
+                Debug.Log(player.score);
+                f = 0.0f;
+            }
 
             Sync(millisecondsPassed);
             smoothBpm = smoothing.SmoothBPM(bpm);

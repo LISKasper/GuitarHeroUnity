@@ -22,6 +22,7 @@ public class Player : MonoBehaviour
     public uint resolution;
     public float speed;
     public uint nextBar;
+    public float score;
     private List<LongNote> longNotes;
 
     public RenderTexture Initialize(
@@ -35,7 +36,7 @@ public class Player : MonoBehaviour
         layerMask = 1 << 10;
         song = _song;
         notes = song.data.notes;
-
+        score = 0.0f;
         pool = _pool;
         index = new PoolIndex();
         resolution = _resolution;
@@ -286,13 +287,21 @@ public class Player : MonoBehaviour
                 if (playerInput.fred[note.fred])
                 {
                     note.SetHeld(true);
+                    if (note.startHolding < 0)
+                        note.StartHolding(smoothTick);
 
                     flame[note.fred].gameObject.SetActive(true);
                     flame[note.fred].Reset();
                     flame[note.fred].seconds = 1f / 60f * 8f;
                 }
                 else
+                {
+                    if (note.startHolding > 0)
+                    {
+                        score += (float)(smoothTick - note.startHolding) / 1000.0f;
+                    }
                     note.SetHeld(false);
+                }
 
                 if (note.timestamp - smoothTick < -window && !note.held)
                     toRemove.Add(note);
@@ -300,7 +309,6 @@ public class Player : MonoBehaviour
 
             foreach (LongNote note in toRemove)
             {
-                Debug.Log("Removing note");
                 willRemove.Add(note.noteInstance);
                 longNotes.Remove(note);
             }
@@ -330,10 +338,10 @@ public class Player : MonoBehaviour
 
                     willRemove.Add(note);
                     missedThisFrame = true;
+                    noteCounter.number = 0;
                 }
 
                 nextLine.Clear();
-                noteCounter.number = 0;
             }
 
             if (nextLine.state == Line.State.Success)
@@ -342,7 +350,11 @@ public class Player : MonoBehaviour
                 {
                     uint fred = note.fred;
                     if (longNotes.All(longNote => note != longNote.noteInstance))
+                    {
                         willRemove.Add(note);
+                        noteCounter.number++;
+                        score += 1.0f * 1 + noteCounter.number / 100.0f;
+                    }
 
                     flame[fred].gameObject.SetActive(true);
                     flame[fred].Reset();
@@ -350,7 +362,6 @@ public class Player : MonoBehaviour
                 }
 
                 nextLine.Clear();
-                noteCounter.number++;
             }
         }
 
@@ -458,10 +469,16 @@ public struct LongNote
     public readonly double endOfNoteInMeters;
     public readonly Player.NoteInstance noteInstance;
     public bool held;
+    public double startHolding;
 
     public void SetHeld(bool held)
     {
         this.held = held;
+    }
+
+    public void StartHolding(double time)
+    {
+        startHolding = time;
     }
 
     public LongNote(float timestamp,
@@ -474,5 +491,6 @@ public struct LongNote
         this.endOfNoteInMeters = endOfNoteInMeters;
         this.noteInstance = noteInstance;
         held = false;
+        startHolding = -1.0f;
     }
 }

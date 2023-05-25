@@ -34,26 +34,23 @@ public class NoteCounter : MonoBehaviour
             numberRenderer[i].UpdateNumber();
         }
 
-        if (number > 29)
-        {
-            showCounterAnimation = Mathf.Min(showCounterAnimation + Time.deltaTime * 2f,
-                1);
-            transform.localPosition = Vector3.LerpUnclamped(hidePosition,
-                showPosition,
-                elastic(showCounterAnimation));
-            gameObject.SetActive(true);
-        }
-        else
-        {
-            showCounterAnimation = Mathf.Max(showCounterAnimation - Time.deltaTime * 3f,
-                0);
-            transform.localPosition = Vector3.LerpUnclamped(hidePosition,
-                showPosition,
-                BackEaseOut(showCounterAnimation));
-            if (showCounterAnimation == 0)
-                gameObject.SetActive(false);
-            //showCounterAnimation = Mathf.Max(showCounterAnimation - Time.deltaTime, 0f);
-        }
+        showCounterAnimation = Mathf.Min(showCounterAnimation + Time.deltaTime * 2f,
+            1);
+        transform.localPosition = Vector3.LerpUnclamped(hidePosition,
+            showPosition,
+            elastic(showCounterAnimation));
+        gameObject.SetActive(true);
+        //else
+        //{
+        //    showCounterAnimation = Mathf.Max(showCounterAnimation - Time.deltaTime * 3f,
+        //        0);
+        //    transform.localPosition = Vector3.LerpUnclamped(hidePosition,
+        //        showPosition,
+        //        BackEaseOut(showCounterAnimation));
+        //    if (showCounterAnimation == 0)
+        //        gameObject.SetActive(false);
+        //    //showCounterAnimation = Mathf.Max(showCounterAnimation - Time.deltaTime, 0f);
+        //}
     }
 
     public static float elastic(float p)
