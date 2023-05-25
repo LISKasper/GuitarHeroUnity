@@ -328,45 +328,10 @@ public class Player : MonoBehaviour
         if (nextLine.available)
         {
             bool correctColors = true;
-            //ignore freds lower than the lowest one in the next line, these are allowed to be pressed
             for (int i = nextLine.lowestFred; i < playerInput.fred.Length; ++i)
-                //Debug.Log("fred "+i+" "+playerInput.fred[i] + " needs to equal " + nextLine.fred[i]);
                 correctColors &= playerInput.fred[i] == nextLine.fred[i];
-            //Debug.Log("Holding correct colors " + correctColors);
-            //Check if strum has already been pressed, 
-            //if the colors are pressed on time afterwards it will register and exit here
-            //also check if hammerOn, then no strum will be necessary
-            if ((nextLine.strumPressed || nextLine.isHammerOn) && correctColors)
-            {
+            if (correctColors)
                 nextLine.succes = true;
-                //Debug.Log("Pressed strum after holding correct colors");
-            }
-            else
-            {
-                //check for strum input
-                if (playerInput.strumPressed)
-                {
-                    //Debug.Log("Strum Pressed");
-                    //check if inside window
-                    if (Mathf.Abs((float)(nextLine.timestamp - smoothTick)) <= window)
-                    {
-                        //Debug.Log("Inside of window! correct colors yet: " + correctColors);
-                        //check if double strum pressed, this is a fail
-                        if (nextLine.strumPressed)
-                            nextLine.fail = true;
-                        nextLine.strumPressed = true;
-                        if (correctColors && !nextLine.fail)
-                            nextLine.succes = true;
-                    }
-                    else
-                    {
-                        //strummed too early
-                        //Debug.Log("Strummed too early");
-                        noteCounter.number = 0;
-                    }
-                }
-                //Debug.Log("Strum not pressed");
-            }
 
             if (nextLine.timestamp - smoothTick < -window)
             {
