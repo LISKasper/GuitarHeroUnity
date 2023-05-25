@@ -114,13 +114,12 @@ public class SongLoader : MonoBehaviour
             string[] chart = File.ReadAllLines(fullFileName);
             List<Song.Note> notes = new List<Song.Note>();
             List<Song.SyncTrack> syncTrack = new List<Song.SyncTrack>();
-            Song.Info info = new Song.Info();
-            //Debug.Log(chart.Length);
+            uint resolution = 0;
             for (int i = 0; i < chart.Length; ++i)
             {
                 if (chart[i].Contains("[Song]"))
                 {
-                    i = LoadChartSong(info,
+                    i = LoadChartSong(out resolution,
                         chart,
                         i);
                     continue;
@@ -139,13 +138,13 @@ public class SongLoader : MonoBehaviour
                     i = LoadChartNotes(chart,
                         i,
                         notes,
-                        info.resolution);
+                        resolution);
                 }
             }
 
             Song.Data data = new Song.Data();
             data.syncTrack = syncTrack;
-            data.info = info;
+            data.resolution = resolution;
             data.notes = notes;
             song.data = data;
         }
@@ -161,10 +160,11 @@ public class SongLoader : MonoBehaviour
         }
     }
 
-    private int LoadChartSong(Song.Info info,
+    private int LoadChartSong(out uint resolution,
         string[] chart,
         int i)
     {
+        resolution = 0;
         int timeout = 100000;
         while (i < timeout)
         {
@@ -188,7 +188,7 @@ public class SongLoader : MonoBehaviour
 
             if (chart[i].Contains("Resolution"))
             {
-                info.resolution = uint.Parse(chart[i].Split(new[] { " = " },
+                resolution = uint.Parse(chart[i].Split(new[] { " = " },
                     StringSplitOptions.None)[1]);
             }
 

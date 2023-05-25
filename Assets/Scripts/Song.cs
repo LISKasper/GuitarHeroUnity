@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [Serializable]
 public class Song
 {
     public bool ready;
     public Data data;
-    [FormerlySerializedAs("song")] public AudioClip audio;
+    public AudioClip audio;
 
     //Data
     public FileInfo fileInfo;
@@ -18,14 +17,8 @@ public class Song
     public class Data
     {
         public List<Note> notes;
-        public Info info;
-        public List<SyncTrack> syncTrack;
-    }
-
-    [Serializable]
-    public class Info
-    {
         public uint resolution;
+        public List<SyncTrack> syncTrack;
     }
 
     [Serializable]

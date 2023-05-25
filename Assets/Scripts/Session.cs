@@ -43,7 +43,7 @@ public class Session : MonoBehaviour
             Sync(millisecondsPassed);
             smoothBpm = smoothing.SmoothBPM(bpm);
             smoothTick = smoothing.SmoothTick(tick,
-                song.data.info.resolution);
+                song.data.resolution);
             bool playGuitarMusic = false;
             player.SpawnObjects(tick,
                 beatsPerSecond);
@@ -122,7 +122,7 @@ public class Session : MonoBehaviour
                 1024),
             pool,
             poolIndex,
-            song.data.info.resolution,
+            song.data.resolution,
             speed);
         outputs.Add(output);
 
@@ -167,7 +167,7 @@ public class Session : MonoBehaviour
         beatsPerSecond = bpm / 60d;
         secondsPassed = millisecondsPassed / 1000d;
         beatsPassed = beatsPerSecond * secondsPassed;
-        ticksPassed = beatsPassed * song.data.info.resolution;
+        ticksPassed = beatsPassed * song.data.resolution;
         if (!double.IsNaN(ticksPassed) && bpm > 0)
             tick += ticksPassed;
         if (syncIndex < song.data.syncTrack.Count) //check if on final sync
