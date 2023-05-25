@@ -11,7 +11,7 @@ public class LongNoteMesh : MonoBehaviour
         for (int i = 0; i < vertices.Length; ++i)
         {
             if (vertices[i].y > 0)
-                vertices[i].x = vertices[i].x * 0.1f;
+                vertices[i].x *= 0.1f;
         }
 
         m.vertices = vertices;

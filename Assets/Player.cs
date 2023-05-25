@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -21,7 +22,7 @@ public class Player : MonoBehaviour
     public uint resolution;
     public float speed;
     public uint nextBar;
-    public bool lastNoteHit = true; //mute guitar track?
+    private List<LongNote> longNotes;
 
     public RenderTexture Initialize(
         Song _song,
@@ -41,14 +42,16 @@ public class Player : MonoBehaviour
         nextBar = resolution;
         speed = _speed;
         index = _poolIndex;
-        lastNoteHit = true;
+        longNotes = new List<LongNote>();
         activeNotes = new List<NoteInstance>();
         activeBars = new List<BarInstance>();
         willRemove = new List<NoteInstance>();
         willRemoveBars = new List<BarInstance>();
-        nextLine = new Line();
-        nextLine.note = new List<NoteInstance>();
-        nextLine.fred = new bool[5];
+        nextLine = new Line
+        {
+            note = new List<NoteInstance>(),
+            fred = new bool[5]
+        };
 
         noteCounter.Initialize();
 
@@ -102,41 +105,37 @@ public class Player : MonoBehaviour
         return newPool;
     }
 
-    public void SpawnObjects(double tick,
-        double beatsPerSecond)
+    public void SpawnObjects(double tick)
     {
         if (index.note >= notes.Count)
             return; //end of song
         Song.Note nextNote = notes[index.note];
-        double tenSecondsInTicks = beatsPerSecond * 3 * resolution;
-        if (nextNote.timestamp < tick + MetersToTickDistance(4f)) //spawn tick + 10 seconds?
-        {
-            //Debug.Log("New Note");
-            try
-            {
-                bool longNote = nextNote.duration > 0;
-                int poolNumber = (int)nextNote.fred + (longNote ? 5 : 0);
-                NoteModel noteModel = pool.note[poolNumber][index.noteModel[poolNumber] % pool.noteSize];
-                GameObject newNote = noteModel.gameObject;
-                noteModel.myTransform.rotation = cam.rotation;
-                newNote.SetActive(true);
-                NoteInstance noteInstance = pool.noteInstance[index.noteInstance % pool.noteInstanceSize];
-                index.noteInstance++;
-                noteInstance.Update(noteModel,
-                    nextNote.timestamp,
-                    nextNote.fred,
-                    nextNote.duration);
-                activeNotes.Add(noteInstance);
+        if (!(nextNote.timestamp < tick + MetersToTickDistance(4f))) //spawn tick + 10 seconds?
+            return;
 
-                index.note++;
-                index.noteModel[poolNumber]++;
-                SpawnObjects(tick,
-                    beatsPerSecond);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e.Message + " - " + e.StackTrace);
-            }
+        try
+        {
+            bool longNote = nextNote.duration > 0;
+            int poolNumber = (int)nextNote.fred + (longNote ? 5 : 0);
+            NoteModel noteModel = pool.note[poolNumber][index.noteModel[poolNumber] % pool.noteSize];
+            GameObject newNote = noteModel.gameObject;
+            noteModel.myTransform.rotation = cam.rotation;
+            newNote.SetActive(true);
+            NoteInstance noteInstance = pool.noteInstance[index.noteInstance % pool.noteInstanceSize];
+            index.noteInstance++;
+            noteInstance.Update(noteModel,
+                nextNote.timestamp,
+                nextNote.fred,
+                nextNote.duration);
+            activeNotes.Add(noteInstance);
+
+            index.note++;
+            index.noteModel[poolNumber]++;
+            SpawnObjects(tick);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e.Message + " - " + e.StackTrace);
         }
     }
 
@@ -156,16 +155,15 @@ public class Player : MonoBehaviour
     }
 
     public void UpdateObjects(double smoothTick,
-        Sprite[] notes,
+        Sprite[] noteSprites,
         int frameIndex)
     {
         Vector3 boardPosition = board.localPosition;
         boardPosition.z = (float)(TickDistanceToMeters(smoothTick) % 2 * -1f + 4);
         if (!float.IsNaN(boardPosition.z))
             board.localPosition = boardPosition;
-        for (int i = 0; i < activeNotes.Count; ++i)
+        foreach (NoteInstance noteInstance in activeNotes)
         {
-            NoteInstance noteInstance = activeNotes[i];
             Transform noteTransform = noteInstance.noteModel.transform;
             Vector3 pos = noteTransform.localPosition;
 
@@ -173,44 +171,42 @@ public class Player : MonoBehaviour
             double distanceInMeters = TickDistanceToMeters(tickDistance);
             pos.z = (float)distanceInMeters;
             noteTransform.localPosition = pos;
-            double noteDistance = tickDistance;
-            double noteDistanceInMeters = TickDistanceToMeters(noteDistance);
             double endOfNoteDistance = tickDistance + noteInstance.duration;
             double endOfNoteInMeters = TickDistanceToMeters(endOfNoteDistance);
             if (noteInstance.duration > 0)
             {
                 //update long note length
                 float length = (float)(endOfNoteInMeters - distanceInMeters);
-                noteInstance.noteModel.SetLengt(length);
+                noteInstance.noteModel.SetLength(length);
             }
 
             //show correct sprite
             SpriteRenderer spriteRenderer = noteInstance.noteModel.spriteRenderer;
-            spriteRenderer.sprite = notes[noteInstance.fred];
+            spriteRenderer.sprite = noteSprites[noteInstance.fred];
 
-            if (endOfNoteInMeters < -1) //out of view
+            if (endOfNoteInMeters < -1 &&
+                longNotes.All(longNote => noteInstance != longNote.noteInstance)) //out of view 
                 willRemove.Add(noteInstance);
         }
     }
 
     public void CreateBar(double tick)
     {
-        if (nextBar < tick + MetersToTickDistance(4f)) //spawn tick + 10 seconds?
-        {
-            BarInstance newBar = pool.bar[index.bar % pool.barSize];
-            index.bar++;
-            newBar.gameObject.SetActive(true);
-            newBar.timestamp = nextBar;
-            activeBars.Add(newBar);
-            nextBar += resolution;
-        }
+        if (!(nextBar < tick + MetersToTickDistance(4f))) //spawn tick + 10 seconds?
+            return;
+
+        BarInstance newBar = pool.bar[index.bar % pool.barSize];
+        index.bar++;
+        newBar.gameObject.SetActive(true);
+        newBar.timestamp = nextBar;
+        activeBars.Add(newBar);
+        nextBar += resolution;
     }
 
     public void UpdateActiveBars(double smoothTick)
     {
-        for (int i = 0; i < activeBars.Count; ++i)
+        foreach (BarInstance barInstance in activeBars)
         {
-            BarInstance barInstance = activeBars[i];
             double tickDistance = barInstance.timestamp - smoothTick;
             double distanceInMeters = TickDistanceToMeters(tickDistance);
             Vector3 pos = barInstance.myTransform.localPosition;
@@ -244,10 +240,9 @@ public class Player : MonoBehaviour
             //only create line when it is a bit closer 
             if (activeNotes.Count > 0 && activeNotes[0].timestamp < smoothTick + window * 2)
             {
-                nextLine.note.Add(activeNotes[0]); //add next note to line
                 nextLine.timestamp = activeNotes[0].timestamp;
-                int i = 1;
-                while (i < 5) //check if more notes are on the same timestamp
+                //check if more notes are on the same timestamp
+                for (int i = 0; i < 5; ++i)
                 {
                     if (i >= activeNotes.Count)
                         break; //out of range
@@ -255,14 +250,22 @@ public class Player : MonoBehaviour
                     if (Math.Abs(activeNotes[i].timestamp - nextLine.timestamp) > 0.001)
                         break; //different line
 
+                    if (activeNotes[i].duration > 0)
+                    {
+                        double endOfNote = smoothTick + activeNotes[i].duration;
+                        longNotes.Add(new LongNote(activeNotes[i].timestamp,
+                            activeNotes[i].fred,
+                            endOfNote,
+                            activeNotes[i]));
+                    }
+
                     nextLine.note.Add(activeNotes[i]);
-                    i++;
                 }
 
                 nextLine.lowestFred = 4;
-                for (int j = 0; j < nextLine.note.Count; ++j)
+                foreach (NoteInstance note in nextLine.note)
                 {
-                    uint fred = nextLine.note[j].fred;
+                    uint fred = note.fred;
                     nextLine.lowestFred = Mathf.Min(nextLine.lowestFred,
                         (int)fred);
                     nextLine.fred[fred] = true;
@@ -272,6 +275,39 @@ public class Player : MonoBehaviour
             }
         }
 
+        if (longNotes.Count > 0)
+        {
+            List<LongNote> toRemove = new List<LongNote>();
+            foreach (LongNote note in longNotes)
+            {
+                if (note.endOfNoteInMeters < smoothTick)
+                    toRemove.Add(note);
+
+                if (playerInput.fred[note.fred])
+                {
+                    note.SetHeld(true);
+
+                    flame[note.fred].gameObject.SetActive(true);
+                    flame[note.fred].Reset();
+                    flame[note.fred].seconds = 1f / 60f * 8f;
+                }
+                else
+                    note.SetHeld(false);
+
+                if (note.timestamp - smoothTick < -window && !note.held)
+                    toRemove.Add(note);
+            }
+
+            foreach (LongNote note in toRemove)
+            {
+                Debug.Log("Removing note");
+                willRemove.Add(note.noteInstance);
+                longNotes.Remove(note);
+            }
+
+            toRemove.Clear();
+        }
+
         //Check if next line is available now
         if (nextLine.available)
         {
@@ -279,29 +315,35 @@ public class Player : MonoBehaviour
             for (int i = nextLine.lowestFred; i < playerInput.fred.Length; ++i)
                 correctColors &= playerInput.fred[i] == nextLine.fred[i];
             if (correctColors)
-                nextLine.succes = true;
+                nextLine.state = Line.State.Success;
 
             if (nextLine.timestamp - smoothTick < -window)
-                nextLine.fail = true;
+                nextLine.state = Line.State.Failed;
 
             //Check if next line is succes or fail
-            if (nextLine.fail)
+            if (nextLine.state == Line.State.Failed)
             {
-                for (int i = 0; i < nextLine.note.Count; ++i)
-                    willRemove.Add(nextLine.note[i]);
+                foreach (NoteInstance note in nextLine.note)
+                {
+                    if (longNotes.Any(longNote => note == longNote.noteInstance))
+                        continue;
+
+                    willRemove.Add(note);
+                    missedThisFrame = true;
+                }
+
                 nextLine.Clear();
                 noteCounter.number = 0;
-                lastNoteHit = false;
-                missedThisFrame = true;
             }
 
-            if (nextLine.succes && !nextLine.fail)
+            if (nextLine.state == Line.State.Success)
             {
-                //Debug.Log("HIT");
-                for (int i = 0; i < nextLine.note.Count; ++i)
+                foreach (NoteInstance note in nextLine.note)
                 {
-                    willRemove.Add(nextLine.note[i]);
-                    uint fred = nextLine.note[i].fred;
+                    uint fred = note.fred;
+                    if (longNotes.All(longNote => note != longNote.noteInstance))
+                        willRemove.Add(note);
+
                     flame[fred].gameObject.SetActive(true);
                     flame[fred].Reset();
                     flame[fred].seconds = 1f / 60f * 8f;
@@ -309,11 +351,10 @@ public class Player : MonoBehaviour
 
                 nextLine.Clear();
                 noteCounter.number++;
-                lastNoteHit = true;
             }
         }
 
-        for (int i = willRemove.Count - 1; i > -1; --i)
+        for (int i = willRemove.Count - 1; i >= 0; --i)
         {
             activeNotes.Remove(willRemove[i]);
             willRemove[i].noteModel.transform.gameObject.SetActive(false);
@@ -383,21 +424,55 @@ public class Player : MonoBehaviour
     [Serializable]
     public class Line
     {
+        public enum State
+        {
+            Unknown,
+            Success,
+            Failed
+        }
+
         public bool available;
         public int lowestFred;
         public double timestamp;
         public bool[] fred;
         public List<NoteInstance> note;
-        public bool succes, fail;
+        public State state;
 
         public void Clear()
         {
-            available = succes = fail = false;
+            state = State.Unknown;
+            available = false;
             timestamp = 0;
             lowestFred = 4;
             note.Clear();
             for (int i = 0; i < fred.Length; ++i)
                 fred[i] = false;
         }
+    }
+}
+
+public struct LongNote
+{
+    public float timestamp;
+    public readonly uint fred;
+    public readonly double endOfNoteInMeters;
+    public readonly Player.NoteInstance noteInstance;
+    public bool held;
+
+    public void SetHeld(bool held)
+    {
+        this.held = held;
+    }
+
+    public LongNote(float timestamp,
+        uint fred,
+        double endOfNoteInMeters,
+        Player.NoteInstance noteInstance)
+    {
+        this.timestamp = timestamp;
+        this.fred = fred;
+        this.endOfNoteInMeters = endOfNoteInMeters;
+        this.noteInstance = noteInstance;
+        held = false;
     }
 }

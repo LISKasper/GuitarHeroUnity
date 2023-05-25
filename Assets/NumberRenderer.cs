@@ -10,8 +10,11 @@ public class NumberRenderer : MonoBehaviour
     public void UpdateNumber()
     {
         if (time < 1)
+        {
             time = Mathf.Min(time + Time.deltaTime,
                 1);
+        }
+
         Vector3 localPos = transform.localPosition;
         localPos.y = Mathf.LerpUnclamped(startMotion,
             endMotion,
