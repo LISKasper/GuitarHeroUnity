@@ -44,7 +44,6 @@ public class Session : MonoBehaviour
             smoothBpm = smoothing.SmoothBPM(bpm);
             smoothTick = smoothing.SmoothTick(tick,
                 song.data.resolution);
-            bool playGuitarMusic = false;
             player.SpawnObjects(tick,
                 beatsPerSecond);
             player.UpdateObjects(smoothTick,

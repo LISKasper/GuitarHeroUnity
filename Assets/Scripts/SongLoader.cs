@@ -78,11 +78,11 @@ public class SongLoader : MonoBehaviour
     {
         Debug.Log("Loading song");
         yield return null;
-        FileInfo songFileInfo = new FileInfo(song.fileInfo.Directory.FullName + "/song.ogg");
+        FileInfo songFileInfo = new FileInfo(song.fileInfo.Directory.FullName + "/song.wav");
         if (songFileInfo.Exists)
         {
             using (UnityWebRequest uwr = UnityWebRequestMultimedia.GetAudioClip(songFileInfo.FullName,
-                       AudioType.OGGVORBIS))
+                       AudioType.WAV))
             {
                 yield return uwr.SendWebRequest();
                 if (uwr.isNetworkError || uwr.isHttpError)
@@ -268,7 +268,7 @@ public class SongLoader : MonoBehaviour
                 string[] splitted = line.Split(new[] { " = " },
                     StringSplitOptions.None);
                 string[] noteSplitted = splitted[1].Split(" "[0]);
-                uint timestamp = uint.Parse(splitted[0]);
+                uint timestamp = uint.Parse(splitted[0]) - 384;
                 if (noteSplitted[0] == "N")
                 {
                     uint fred = uint.Parse(noteSplitted[1]);
