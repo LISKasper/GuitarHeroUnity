@@ -384,16 +384,15 @@ public class Player : MonoBehaviour
     public class Line
     {
         public bool available;
-        public int number;
         public int lowestFred;
         public double timestamp;
         public bool[] fred;
         public List<NoteInstance> note;
-        public bool strumPressed, succes, fail, isHammerOn;
+        public bool succes, fail;
 
         public void Clear()
         {
-            available = succes = fail = isHammerOn = strumPressed = false;
+            available = succes = fail = false;
             timestamp = 0;
             lowestFred = 4;
             note.Clear();
