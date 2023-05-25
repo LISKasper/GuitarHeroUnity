@@ -20,11 +20,7 @@
   3400 = TS 4
   3400 = B 69999
 }
-[Events]
-{
-    10000 = E "end"
-}
-[ExpertSingle]
+[Chart]
 {
   3456 = N 4 39
   3504 = N 4 39

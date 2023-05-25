@@ -58,20 +58,6 @@ public class Song
     }
 
     [Serializable]
-    public class SongEvent
-    {
-        public uint timestamp;
-        public string name;
-
-        public SongEvent(uint _timestamp,
-            string _name)
-        {
-            timestamp = _timestamp;
-            name = _name;
-        }
-    }
-
-    [Serializable]
     public class SyncTrack
     {
         public uint timestamp, value;
@@ -90,6 +76,6 @@ public class Song
     [Serializable]
     public class Audio
     {
-        public AudioClip song, guitar, rhythm, preview;
+        public AudioClip song, guitar, rhythm;
     }
 }

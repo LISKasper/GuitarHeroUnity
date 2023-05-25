@@ -20,11 +20,7 @@
   384 = TS 4
   384 = B 64999
 }
-[Events]
-{
-    3440 = E "end"
-}
-[ExpertSingle]
+[Chart]
 {
   385 = N 3 39
   433 = N 3 0

@@ -160,7 +160,6 @@ public class SongLoader : MonoBehaviour
             notes.hard = new List<Song.Note>();
             notes.expert = new List<Song.Note>();
             List<Song.SyncTrack> syncTrack = new List<Song.SyncTrack>();
-            List<Song.SongEvent> events = new List<Song.SongEvent>();
             Song.Info info = new Song.Info();
             //Debug.Log(chart.Length);
             for (int i = 0; i < chart.Length; ++i)
@@ -181,46 +180,11 @@ public class SongLoader : MonoBehaviour
                     continue;
                 }
 
-                if (chart[i].Contains("[Events]"))
-                {
-                    i = LoadChartEvents(events,
-                        chart,
-                        i);
-                    continue;
-                }
-
-                if (chart[i].Contains("[ExpertSingle]"))
+                if (chart[i].Contains("[Chart]"))
                 {
                     i = LoadChartNotes(chart,
                         i,
                         notes.expert,
-                        info.resolution);
-                    continue;
-                }
-
-                if (chart[i].Contains("[HardSingle]"))
-                {
-                    i = LoadChartNotes(chart,
-                        i,
-                        notes.hard,
-                        info.resolution);
-                    continue;
-                }
-
-                if (chart[i].Contains("[MediumSingle]"))
-                {
-                    i = LoadChartNotes(chart,
-                        i,
-                        notes.medium,
-                        info.resolution);
-                    continue;
-                }
-
-                if (chart[i].Contains("[EasySingle]"))
-                {
-                    i = LoadChartNotes(chart,
-                        i,
-                        notes.easy,
                         info.resolution);
                 }
             }
@@ -310,46 +274,6 @@ public class SongLoader : MonoBehaviour
                 syncTrack.Add(new Song.SyncTrack(uint.Parse(splitted[0]),
                     commandValue[0],
                     uint.Parse(commandValue[1])));
-            }
-
-            i++;
-        }
-
-        return i;
-    }
-
-    private int LoadChartEvents(List<Song.SongEvent> events,
-        string[] chart,
-        int i)
-    {
-        int timeout = 100000;
-        while (i < timeout)
-        {
-            if (chart[i].Contains("{"))
-            {
-                //Debug.Log("Start reading Events");
-                i++;
-                break;
-            }
-
-            i++;
-        }
-
-        while (i < timeout)
-        {
-            if (chart[i].Contains("}"))
-            {
-                //Debug.Log("End reading Events");
-                break;
-            }
-
-            string line = chart[i];
-            if (line.Contains(" = E "))
-            {
-                string[] splitted = line.Split(new[] { " = E " },
-                    StringSplitOptions.None);
-                events.Add(new Song.SongEvent(uint.Parse(splitted[0]),
-                    splitted[1]));
             }
 
             i++;
