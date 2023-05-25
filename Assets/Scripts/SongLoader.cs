@@ -13,8 +13,8 @@ public class SongLoader : MonoBehaviour
     public delegate void OnPrepared();
 
     private static SongLoader instance;
-    private string error;
     private readonly object lockObject = new object();
+    private string error;
 
     //threading
     private Song song;
@@ -228,7 +228,6 @@ public class SongLoader : MonoBehaviour
             Song.Data data = new Song.Data();
             data.syncTrack = syncTrack;
             data.info = info;
-            data.events = events;
             data.notes = notes;
             song.data = data;
         }
@@ -270,8 +269,11 @@ public class SongLoader : MonoBehaviour
             }
 
             if (chart[i].Contains("Resolution"))
+            {
                 info.resolution = uint.Parse(chart[i].Split(new[] { " = " },
                     StringSplitOptions.None)[1]);
+            }
+
             i++;
         }
 
@@ -374,7 +376,6 @@ public class SongLoader : MonoBehaviour
             i++;
         }
 
-        uint starPowerEndsAt = 0;
         while (i < timeout)
         {
             if (chart[i].Contains("}"))
@@ -392,42 +393,13 @@ public class SongLoader : MonoBehaviour
                 uint timestamp = uint.Parse(splitted[0]);
                 if (noteSplitted[0] == "N")
                 {
-                    bool hammeron = false;
                     uint fred = uint.Parse(noteSplitted[1]);
-                    Song.Note previousNote = null;
-                    if (list.Count > 0)
-                    {
-                        previousNote = list[list.Count - 1];
-                        if (previousNote.timestamp == timestamp) //double notes no hammeron
-                            previousNote.hammerOn = false;
-                        else
-                            hammeron = timestamp < previousNote.timestamp + resolution / 2 &&
-                                       previousNote.fred != fred && previousNote.timestamp != timestamp;
-                    }
 
                     if (uint.Parse(noteSplitted[1]) < 5)
+                    {
                         list.Add(new Song.Note(timestamp,
                             fred,
-                            uint.Parse(noteSplitted[2]),
-                            timestamp <= starPowerEndsAt,
-                            hammeron));
-                }
-
-                if (noteSplitted[0] == "S")
-                {
-                    starPowerEndsAt = timestamp + uint.Parse(noteSplitted[2]);
-                    //also set previous note to star
-                    int traceBack = 1;
-                    while (traceBack < 5)
-                    {
-                        if (list[list.Count - traceBack].timestamp == timestamp)
-                        {
-                            list[list.Count - traceBack].star = true;
-                            traceBack++;
-                            continue;
-                        }
-
-                        break;
+                            uint.Parse(noteSplitted[2])));
                     }
                 }
             }

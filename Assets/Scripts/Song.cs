@@ -28,7 +28,6 @@ public class Song
         public Notes notes;
         public Info info;
         public List<SyncTrack> syncTrack;
-        public List<SongEvent> events;
     }
 
     [Serializable]
@@ -47,19 +46,14 @@ public class Song
     public class Note
     {
         public uint timestamp, duration, fred;
-        public bool star, hammerOn;
 
         public Note(uint _timestamp,
             uint _fred,
-            uint _duration,
-            bool _star,
-            bool _hammerOn)
+            uint _duration)
         {
             timestamp = _timestamp;
             duration = _duration;
             fred = _fred;
-            star = _star;
-            hammerOn = _hammerOn;
         }
     }
 

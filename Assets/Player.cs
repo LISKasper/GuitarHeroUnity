@@ -143,10 +143,7 @@ public class Player : MonoBehaviour
                 noteInstance.Update(noteModel,
                     nextNote.timestamp,
                     nextNote.fred,
-                    nextNote.duration,
-                    nextNote.star,
-                    nextNote.hammerOn);
-                noteInstance.seen = false;
+                    nextNote.duration);
                 activeNotes.Add(noteInstance);
 
                 index.note++;
@@ -267,7 +264,6 @@ public class Player : MonoBehaviour
             {
                 nextLine.note.Add(activeNotes[0]); //add next note to line
                 nextLine.timestamp = activeNotes[0].timestamp;
-                nextLine.isHammerOn = activeNotes[0].hammeron;
                 int i = 1;
                 while (i < 5) //check if more notes are on the same timestamp
                 {
@@ -386,23 +382,19 @@ public class Player : MonoBehaviour
     {
         public NoteModel noteModel;
         public uint timestamp;
-        public bool seen, star, hammeron;
         public uint fred;
         public uint duration;
 
         public void Update(NoteModel _noteModel,
             uint _timestamp,
             uint _fred,
-            uint _duration,
-            bool _star,
-            bool _hammeron)
+            uint _duration
+        )
         {
             noteModel = _noteModel;
             timestamp = _timestamp;
             fred = _fred;
             duration = _duration;
-            star = _star;
-            hammeron = _hammeron;
         }
     }
 
