@@ -1,13 +1,15 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using UnityEngine;
 using UnityEngine.UI;
-using System.IO;
+
 public class SongBlock : MonoBehaviour
 {
-	public FileInfo fileInfo;
-	public SongSelect songSelect;
-	public Text text;
-	public void Play()
-	{
-		songSelect.LoadSong(fileInfo);
-	}
+    public SongSelect songSelect;
+    public Text text;
+    public FileInfo fileInfo;
+
+    public void Play()
+    {
+        songSelect.LoadSong(fileInfo);
+    }
 }
