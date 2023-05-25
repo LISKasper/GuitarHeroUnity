@@ -1,52 +1,19 @@
 ﻿using System;
+using UnityEngine;
 
 [Serializable]
 public class PlayerInput
 {
-    public enum Device
-    {
-        Keyboard,
-        Xinput
-    }
-
     public int deviceId;
-    public Device device;
-    public bool[] fred;
+    public bool[] fred = new bool[5];
     public bool strumPressed;
-    public bool startPressed;
-    public bool starPressed;
-    public float tilt, whammy;
-
-    public PlayerInput(Device _device,
-        int _deviceId)
-    {
-        device = _device;
-        deviceId = _deviceId;
-        fred = new bool[5];
-    }
 
     public void Update()
     {
-        fred[0] = XInput.GetButton(deviceId,
-            XInput.Button.A);
-        fred[1] = XInput.GetButton(deviceId,
-            XInput.Button.B);
-        fred[2] = XInput.GetButton(deviceId,
-            XInput.Button.Y);
-        fred[3] = XInput.GetButton(deviceId,
-            XInput.Button.X);
-        fred[4] = XInput.GetButton(deviceId,
-            XInput.Button.LB);
-        startPressed = XInput.GetButtonDown(deviceId,
-            XInput.Button.Start);
-        starPressed = XInput.GetButtonDown(deviceId,
-            XInput.Button.Back);
-        strumPressed = XInput.GetButtonDown(deviceId,
-            XInput.Button.DPadDown) | XInput.GetButtonDown(deviceId,
-            XInput.Button.DPadUp);
-        tilt = XInput.GetAxis(deviceId,
-            XInput.Axis.RY);
-        whammy = XInput.GetAxis(deviceId,
-            XInput.Axis.RX);
+        fred[0] = Input.GetKey(KeyCode.Alpha1);
+        fred[1] = Input.GetKey(KeyCode.Alpha2);
+        fred[2] = Input.GetKey(KeyCode.Alpha3);
+        fred[3] = Input.GetKey(KeyCode.Alpha4);
+        fred[4] = Input.GetKey(KeyCode.Alpha5);
     }
 }

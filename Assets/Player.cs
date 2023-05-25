@@ -79,8 +79,7 @@ public class Player : MonoBehaviour
         SetLayerRecursive(transform,
             10 + playerNumber);
 
-        playerInput = new PlayerInput(PlayerInput.Device.Xinput,
-            playerNumber);
+        playerInput = new PlayerInput();
 
         return output;
     }
@@ -210,11 +209,14 @@ public class Player : MonoBehaviour
             SpriteRenderer spriteRenderer = noteInstance.noteModel.spriteRenderer;
             NoteRenderer.FredSpriteData fredSpriteData = noteRenderer.spriteData.fred[noteInstance.fred];
             if (noteInstance.star)
+            {
                 spriteRenderer.sprite = noteInstance.hammeron
                     ? fredSpriteData.starHammerOn[frameIndex % 16]
                     : fredSpriteData.star[frameIndex % 16];
+            }
             else
                 spriteRenderer.sprite = noteInstance.hammeron ? fredSpriteData.hammerOn : fredSpriteData.normal;
+
             if (endOfNoteInMeters < -1) //out of view
                 willRemove.Add(noteInstance);
         }
