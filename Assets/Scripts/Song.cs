@@ -6,14 +6,6 @@ using UnityEngine;
 [Serializable]
 public class Song
 {
-    public enum Difficulty
-    {
-        Easy,
-        Medium,
-        Hard,
-        Expert
-    }
-
     public bool ready;
     public Data data;
 
@@ -25,7 +17,7 @@ public class Song
     [Serializable]
     public class Data
     {
-        public Notes notes;
+        public List<Note> notes;
         public Info info;
         public List<SyncTrack> syncTrack;
     }
@@ -34,12 +26,6 @@ public class Song
     public class Info
     {
         public uint resolution;
-    }
-
-    [Serializable]
-    public class Notes
-    {
-        public List<Note> easy, medium, hard, expert;
     }
 
     [Serializable]

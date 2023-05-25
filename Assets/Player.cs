@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public int playerNumber;
     public PlayerInput playerInput;
     public int layerMask;
-    public Song.Difficulty difficulty;
     public NoteCounter noteCounter;
     public RenderTexture output;
     public Song song;
@@ -25,33 +23,17 @@ public class Player : MonoBehaviour
     public uint nextBar;
     public bool lastNoteHit = true; //mute guitar track?
 
-    public RenderTexture Initialize(int _playerNumber,
+    public RenderTexture Initialize(
         Song _song,
-        Song.Difficulty _difficulty,
         Vector2 _output,
         Pool _pool,
         PoolIndex _poolIndex,
         uint _resolution,
         float _speed)
     {
-        playerNumber = _playerNumber;
-        layerMask = 1 << (10 + playerNumber);
+        layerMask = 1 << 10;
         song = _song;
-        switch (_difficulty)
-        {
-            case Song.Difficulty.Easy:
-                notes = song.data.notes.easy;
-                break;
-            case Song.Difficulty.Medium:
-                notes = song.data.notes.medium;
-                break;
-            case Song.Difficulty.Hard:
-                notes = song.data.notes.hard;
-                break;
-            case Song.Difficulty.Expert:
-                notes = song.data.notes.expert;
-                break;
-        }
+        notes = song.data.notes;
 
         pool = _pool;
         index = new PoolIndex();
@@ -77,7 +59,7 @@ public class Player : MonoBehaviour
         cam.GetComponent<Camera>().targetTexture = output;
         cam.GetComponent<Camera>().cullingMask = layerMask;
         SetLayerRecursive(transform,
-            10 + playerNumber);
+            10);
 
         playerInput = new PlayerInput();
 

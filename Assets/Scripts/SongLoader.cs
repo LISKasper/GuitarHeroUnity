@@ -154,11 +154,7 @@ public class SongLoader : MonoBehaviour
             }
 
             string[] chart = File.ReadAllLines(fullFileName);
-            Song.Notes notes = new Song.Notes();
-            notes.easy = new List<Song.Note>();
-            notes.medium = new List<Song.Note>();
-            notes.hard = new List<Song.Note>();
-            notes.expert = new List<Song.Note>();
+            List<Song.Note> notes = new List<Song.Note>();
             List<Song.SyncTrack> syncTrack = new List<Song.SyncTrack>();
             Song.Info info = new Song.Info();
             //Debug.Log(chart.Length);
@@ -184,7 +180,7 @@ public class SongLoader : MonoBehaviour
                 {
                     i = LoadChartNotes(chart,
                         i,
-                        notes.expert,
+                        notes,
                         info.resolution);
                 }
             }

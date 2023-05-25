@@ -110,15 +110,7 @@ public class SongSelect : MonoBehaviour
 
         while (!prepared)
             yield return null;
-        Session.PlayerInfo[] players =
-        {
-            //new Session.PlayerInfo(Song.Difficulty.Easy),
-            //new Session.PlayerInfo(Song.Difficulty.Medium),
-            //new Session.PlayerInfo(Song.Difficulty.Hard),
-            new Session.PlayerInfo(Song.Difficulty.Expert)
-        };
-        session.Initialize(song,
-            players);
+        session.Initialize(song);
         selectScreen.SetActive(false);
         Debug.Log("Ready to play");
         while (fade.color.a > 0)
