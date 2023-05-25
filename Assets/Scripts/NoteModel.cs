@@ -7,7 +7,7 @@ public class NoteModel : MonoBehaviour
     public MeshRenderer line;
     public Material materialInstance;
 
-    public void SetLengt(float meters)
+    public void SetLength(float meters)
     {
         Vector3 localPos = line.transform.localPosition;
         localPos.z = meters * 0.5f;

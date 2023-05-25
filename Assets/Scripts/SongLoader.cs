@@ -268,7 +268,7 @@ public class SongLoader : MonoBehaviour
                 string[] splitted = line.Split(new[] { " = " },
                     StringSplitOptions.None);
                 string[] noteSplitted = splitted[1].Split(" "[0]);
-                uint timestamp = uint.Parse(splitted[0]) - 384;
+                uint timestamp = uint.Parse(splitted[0]);
                 if (noteSplitted[0] == "N")
                 {
                     uint fred = uint.Parse(noteSplitted[1]);

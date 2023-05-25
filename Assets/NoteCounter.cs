@@ -20,7 +20,6 @@ public class NoteCounter : MonoBehaviour
 
     public void UpdateCounter()
     {
-        int temp = number;
         show[3] = number % 10;
         show[2] = number / 10 % 10;
         show[1] = number / 100 % 10;

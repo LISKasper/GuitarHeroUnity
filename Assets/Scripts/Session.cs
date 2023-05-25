@@ -44,8 +44,7 @@ public class Session : MonoBehaviour
             smoothBpm = smoothing.SmoothBPM(bpm);
             smoothTick = smoothing.SmoothTick(tick,
                 song.data.resolution);
-            player.SpawnObjects(tick,
-                beatsPerSecond);
+            player.SpawnObjects(tick);
             player.UpdateObjects(smoothTick,
                 notes,
                 frameIndex);

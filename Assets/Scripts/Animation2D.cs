@@ -20,9 +20,12 @@ public class Animation2D : MonoBehaviour
         seconds += Time.deltaTime;
         index = Mathf.FloorToInt(seconds * fps);
         if (index >= frames.Length)
+        {
             if (!loop)
                 gameObject.SetActive(false);
-        index = index % frames.Length;
+        }
+
+        index %= frames.Length;
         spriteRenderer.sprite = frames[index];
     }
 
@@ -30,11 +33,11 @@ public class Animation2D : MonoBehaviour
     {
         seconds = 0;
         index = 0;
-        if (flip)
-        {
-            Vector3 scale = transform.localScale;
-            scale.x = -scale.x;
-            transform.localScale = scale;
-        }
+        if (!flip)
+            return;
+
+        Vector3 scale = transform.localScale;
+        scale.x = -scale.x;
+        transform.localScale = scale;
     }
 }

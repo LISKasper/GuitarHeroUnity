@@ -4,9 +4,7 @@ using UnityEngine;
 [Serializable]
 public class PlayerInput
 {
-    public int deviceId;
     public bool[] fred = new bool[5];
-    public bool strumPressed;
 
     public void Update()
     {
