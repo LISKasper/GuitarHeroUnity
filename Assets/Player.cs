@@ -264,18 +264,11 @@ public class Player : MonoBehaviour
         for (int i = 0; i < playerInput.fred.Length; ++i)
             fredHighlight[i].SetActive(playerInput.fred[i]);
 
-        double window = resolution / 4;
+        double window = resolution / 8.0f;
 
         //check if new line needs to be created
         if (!nextLine.available)
         {
-            //check if strum bar is hit while there is no new line. this breaks combo
-            if (playerInput.strumPressed)
-            {
-                noteCounter.number = 0;
-                //Debug.Log("Strummed without a new line being available");
-            }
-
             //check if notes are available
             //only create line when it is a bit closer 
             if (activeNotes.Count > 0 && activeNotes[0].timestamp < smoothTick + window * 2)
@@ -283,23 +276,15 @@ public class Player : MonoBehaviour
                 nextLine.note.Add(activeNotes[0]); //add next note to line
                 nextLine.timestamp = activeNotes[0].timestamp;
                 nextLine.isHammerOn = activeNotes[0].hammeron;
-                //Debug.Log("Creating new line with timestamp "+nextLine.timestamp);
                 int i = 1;
                 while (i < 5) //check if more notes are on the same timestamp
                 {
                     if (i >= activeNotes.Count)
-                    {
-                        //Debug.Log("No more active notes");
                         break; //out of range
-                    }
 
-                    if (activeNotes[i].timestamp != nextLine.timestamp)
-                    {
-                        //Debug.Log("active note "+i+" has a different timestamp of "+activeNotes[i].timestamp);
+                    if (Math.Abs(activeNotes[i].timestamp - nextLine.timestamp) > 0.001)
                         break; //different line
-                    }
 
-                    //Debug.Log("Adding one more note");
                     nextLine.note.Add(activeNotes[i]);
                     i++;
                 }
@@ -314,14 +299,7 @@ public class Player : MonoBehaviour
                 }
 
                 nextLine.available = true;
-                //string debugNotes = "";
-                //for (int j = 0; j < nextLine.note.Count; ++j)
-                //{
-                //	debugNotes += nextLine.note[j].fred.ToString() + " ";
-                //}
-                //Debug.Log("Creating new line with notes "+ debugNotes);
             }
-            //Debug.Log("No New Notes");
         }
 
         //Check if next line is available now
@@ -334,17 +312,11 @@ public class Player : MonoBehaviour
                 nextLine.succes = true;
 
             if (nextLine.timestamp - smoothTick < -window)
-            {
                 nextLine.fail = true;
-                //Debug.Log("Too late. note: " + nextLine.timestamp + ". strum: " + smoothTick);
-                //Redo this function again when too late to see if the next set of notes is hit
-                //RegisterHits(smoothTick);
-            }
 
             //Check if next line is succes or fail
             if (nextLine.fail)
             {
-                //Debug.Log("MISS");
                 for (int i = 0; i < nextLine.note.Count; ++i)
                     willRemove.Add(nextLine.note[i]);
                 nextLine.Clear();
