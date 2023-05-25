@@ -177,7 +177,7 @@ public class Player : MonoBehaviour
     }
 
     public void UpdateObjects(double smoothTick,
-        NoteRenderer noteRenderer,
+        Sprite[] notes,
         int frameIndex)
     {
         Vector3 boardPosition = board.localPosition;
@@ -207,15 +207,7 @@ public class Player : MonoBehaviour
 
             //show correct sprite
             SpriteRenderer spriteRenderer = noteInstance.noteModel.spriteRenderer;
-            NoteRenderer.FredSpriteData fredSpriteData = noteRenderer.spriteData.fred[noteInstance.fred];
-            if (noteInstance.star)
-            {
-                spriteRenderer.sprite = noteInstance.hammeron
-                    ? fredSpriteData.starHammerOn[frameIndex % 16]
-                    : fredSpriteData.star[frameIndex % 16];
-            }
-            else
-                spriteRenderer.sprite = noteInstance.hammeron ? fredSpriteData.hammerOn : fredSpriteData.normal;
+            spriteRenderer.sprite = notes[noteInstance.fred];
 
             if (endOfNoteInMeters < -1) //out of view
                 willRemove.Add(noteInstance);

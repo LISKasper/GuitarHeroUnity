@@ -8,7 +8,7 @@ public class Session : MonoBehaviour
     public Player playerPrefab;
     public Player[] players;
     public SessionRenderer sessionRenderer;
-    public NoteRenderer noteRenderer;
+    public Sprite[] notes;
     public bool playing;
     public float speed; //meter per second
     public GameObject[] prefabs;
@@ -54,7 +54,7 @@ public class Session : MonoBehaviour
                 players[i].SpawnObjects(tick,
                     beatsPerSecond);
                 players[i].UpdateObjects(smoothTick,
-                    noteRenderer,
+                    notes,
                     frameIndex);
                 players[i].CreateBar(tick);
                 players[i].UpdateActiveBars(smoothTick);
@@ -120,8 +120,10 @@ public class Session : MonoBehaviour
 
             pool.note = new NoteModel[prefabs.Length][];
             for (int j = 0; j < prefabs.Length; ++j)
+            {
                 pool.note[j] = players[i].MakePool(pool.noteSize,
                     prefabs[j]);
+            }
 
             pool.bar = new BarInstance[pool.barSize];
             poolIndex.bar = poolIndex.note = poolIndex.noteInstance = 0;
